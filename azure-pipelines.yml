@@ -25,21 +25,24 @@ stages:
             inputs:
               command: 'build'
               projects: '**/*.csproj'
+              zipAfterPublish: true
 
           - task: DotNetCoreCLI@2
             displayName: dotnetrestore
             inputs:
-              command: 'custom'
-              custom: tool
-              arguments: restore
-      - job:
-        displayName: Publish Artifact
-        steps:
-          - task: DotNetCoreCLI@2
-            displayName: Publish build to Artifact
+              command: 'restore'
+              projects: '**/*.csproj'
+
+          - task: CopyFiles@2
+            displayName: 'Copy Files to: $(build.artifactstagingdirectory)'
             inputs:
-              command: publish
-              publishWebProjects: false
-              arguments: '-o $(Build.ArtifactStagingDirectory)/Output'
-              zipAfterPublish: true
-              modifyOutputPath: true
+               SourceFolder: '$(system.defaultworkingdirectory)'
+               Contents: '**\bin\$(BuildConfiguration)\**'
+               TargetFolder: '$(build.artifactstagingdirectory)'
+            condition: succeededOrFailed()
+
+          - task: PublishBuildArtifacts@1
+            displayName: 'Publish Artifact: drop'
+            inputs:
+               PathtoPublish: '$(build.artifactstagingdirectory)'
+            condition: succeededOrFailed()
