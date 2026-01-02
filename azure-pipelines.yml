@@ -1,0 +1,45 @@
+trigger:
+  branches:
+    include:
+      - master
+      - feature/*
+
+pool:
+  vmImage: 'windows-Latest'
+
+stages:
+  - stage: Build dotnet
+    displayName: Build the application
+    jobs:
+      - job:
+        displayName: Build Job
+        steps:
+          - task: UseDotNet@2
+            displayName: "Install .Net code SDK"
+            inputs:
+              packageType: 'sdk'
+              version: '9.x'
+
+          - task: DotNetCoreCLI@2
+            displayName: dotnetbuild
+            inputs:
+              command: 'build'
+              projects: '**/*.csproj'
+
+          - task: DotNetCoreCLI@2
+            displayName: dotnetrestore
+            inputs:
+              command: 'custom'
+              custom: tool
+              arguments: restore
+      - job:
+        displayName: Publish Artifact
+        steps:
+          - task: DotNetCoreCLI@2
+            displayName: Publish build to Artifact
+            inputs:
+              command: publish
+              publishWebProjects: false
+              arguments: '-o $(Build.ArtifactStagingDirectory)/Output'
+              zipAfterPublish: true
+              modifyOutputPath: true
