@@ -8,7 +8,7 @@ pool:
   vmImage: 'windows-Latest'
 
 stages:
-  - stage: Build dotnet
+  - stage: Builddotnetapp
     displayName: Build the application
     jobs:
       - job:
