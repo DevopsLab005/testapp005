@@ -54,7 +54,7 @@ stages:
       - job:
         displayName: Deploy to webApps
         steps:
-          - task: AzureWebApp@1
+          - task: AzureWebApp@1 #This Will be deployed to Azure Web APP
             inputs:
               azureSubscription: 'dev_azure_connection_01'
               appType: 'webApp'
