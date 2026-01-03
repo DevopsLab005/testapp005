@@ -8,8 +8,8 @@ pool:
   vmImage: 'windows-Latest'
 
 stages:
-  - stage: Builddotnetapp
-    displayName: Build the application
+  - stage: Build
+    displayName: "Build and publish stage"
     jobs:
       - job:
         displayName: Build Job
@@ -17,32 +17,33 @@ stages:
           - task: UseDotNet@2
             displayName: "Install .Net code SDK"
             inputs:
-              packageType: 'sdk'
-              version: '9.x'
+              packageType: sdk
+              version: '9.0.x'
 
           - task: DotNetCoreCLI@2
-            displayName: dotnetbuild
+            displayName: 'restore Task'
+            inputs:
+              command: 'restore'
+              feedsToUse: 'select'
+              vstsFeed: "my-vsts-feed"
+
+          - task: DotNetCoreCLI@2
+            displayName: 'Build Task'
             inputs:
               command: 'build'
               projects: '**/*.csproj'
-              zipAfterPublish: true
+              arguments: '--configuration $(buildconfiguration)'
 
           - task: DotNetCoreCLI@2
-            displayName: dotnetrestore
+            displayName: publish artifacts
             inputs:
-              command: 'restore'
-              projects: '**/*.csproj'
+              command: publish
+              publishWebProjects: true
+              arguments: '--configuration $(BuildConfiguration) --output $(Build.ArtifactStagingDirectory)'
+              zipAfterPublish: true
 
-          - task: CopyFiles@2
-            displayName: 'Copy Files to: $(build.artifactstagingdirectory)'
+          - task: PublishPipelineArtifact@1
+            displayName: publish to PublishPipelineArtifact@1
             inputs:
-               SourceFolder: '$(system.defaultworkingdirectory)'
-               Contents: '**\bin\$(BuildConfiguration)\**'
-               TargetFolder: '$(build.artifactstagingdirectory)'
-            condition: succeededOrFailed()
-
-          - task: PublishBuildArtifacts@1
-            displayName: 'Publish Artifact: drop'
-            inputs:
-               PathtoPublish: '$(build.artifactstagingdirectory)'
-            condition: succeededOrFailed()
+              targetPath: '$(Build.ArtifactStagingDirectory)' 
+              artifactName: 'myWebsite' 
