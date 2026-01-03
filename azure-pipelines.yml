@@ -48,6 +48,12 @@ stages:
               targetPath: '$(Build.ArtifactStagingDirectory)' 
               artifactName: 'myWebsite'
 
+          - task: DownloadPipelineArtifact@2
+            displayName: DownloadPipelineArtifact@2
+            inputs:
+              artifact: 'myWebsite'
+              path: '$(Pipeline.Workspace)/myWebsite'
+
           - task: PowerShell@2
             displayName: 'List contents of D:\a\1\s directory'
             inputs:
@@ -74,5 +80,5 @@ stages:
               azureSubscription: 'dev_azure_connection_01'
               appType: 'webApp'
               appName: 'webapp005'
-              package: '$(System.DefaultWorkingDirectory)/mywebsite/*.zip'
+              package: '$(Pipeline.Workspace)/**/*.zip'
               deploymentMethod: 'auto'
