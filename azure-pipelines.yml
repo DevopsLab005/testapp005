@@ -46,7 +46,8 @@ stages:
             displayName: publish to PublishPipelineArtifact@1
             inputs:
               targetPath: '$(Build.ArtifactStagingDirectory)' 
-              artifactName: 'myWebsite' 
+              artifactName: 'myWebsite'
+          
 
   - stage: Deploy_to_webApps
     displayName: Deploy to webApps
@@ -59,5 +60,5 @@ stages:
               azureSubscription: 'dev_azure_connection_01'
               appType: 'webApp'
               appName: 'webapp005'
-              package: '$(System.DefaultWorkingDirectory)/**/*.zip'
+              package: '$(System.DefaultWorkingDirectory)/mywebsite/*.zip'
               deploymentMethod: 'auto'
