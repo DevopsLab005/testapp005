@@ -47,6 +47,20 @@ stages:
             inputs:
               targetPath: '$(Build.ArtifactStagingDirectory)' 
               artifactName: 'myWebsite'
+
+          - task: PowerShell@2
+            displayName: 'List contents of D:\a\1\s directory'
+            inputs:
+              targetType: 'inline'
+              script: |
+                Write-Host "Listing contents of D:\a\1\s"
+                if (Test-Path -Path "D:\a\1\s") {
+                          # Use Get-ChildItem for PowerShell
+                  Get-ChildItem -Path D:\a\1\s -Recurse
+                } else {
+                  Write-Host "D:\a\1\s does not exist or is not reachable."
+                }
+
           
 
   - stage: Deploy_to_webApps
