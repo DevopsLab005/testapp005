@@ -7,6 +7,9 @@ trigger:
 pool:
   vmImage: 'windows-Latest'
 
+variables:
+  buildconfiguration: 'Release'
+
 stages:
   - stage: Build
     displayName: "Build and publish stage"
@@ -24,6 +27,7 @@ stages:
             displayName: 'restore Task'
             inputs:
               command: 'restore'
+              projects: '**/*.csproj'
               feedsToUse: 'select'
               vstsFeed: "my-vsts-feed"
 
@@ -47,34 +51,19 @@ stages:
             inputs:
               targetPath: '$(Build.ArtifactStagingDirectory)' 
               artifactName: 'myWebsite'
-
-          - task: DownloadPipelineArtifact@2
-            displayName: DownloadPipelineArtifact@2
-            inputs:
-              artifact: 'myWebsite'
-              path: '$(Pipeline.Workspace)/myWebsite'
-
-          - task: PowerShell@2
-            displayName: 'List contents of D:\a\1\s directory'
-            inputs:
-              targetType: 'inline'
-              script: |
-                Write-Host "Listing contents of D:\a\1\s"
-                if (Test-Path -Path "D:\a\1\s") {
-                          # Use Get-ChildItem for PowerShell
-                  Get-ChildItem -Path D:\a\1\s -Recurse
-                } else {
-                  Write-Host "D:\a\1\s does not exist or is not reachable."
-                }
-
-          
-
+              
   - stage: Deploy_to_webApps
     displayName: Deploy to webApps
     jobs:
       - job:
         displayName: Deploy to webApps
         steps:
+          - task: DownloadPipelineArtifact@2
+            displayName: DownloadPipelineArtifact@2
+            inputs:
+              artifact: 'myWebsite'
+              path: '$(Pipeline.Workspace)/myWebsite'
+
           - task: AzureWebApp@1 #This Will be deployed to Azure Web APP
             inputs:
               azureSubscription: 'dev_azure_connection_01'
