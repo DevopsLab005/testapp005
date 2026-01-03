@@ -48,7 +48,7 @@ stages:
               targetPath: '$(Build.ArtifactStagingDirectory)' 
               artifactName: 'myWebsite' 
 
-  - stage: Deploy to webApps
+  - stage: Deploy_to_webApps
     displayName: Deploy to webApps
     jobs:
       - job:
