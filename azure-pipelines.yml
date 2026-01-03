@@ -47,3 +47,17 @@ stages:
             inputs:
               targetPath: '$(Build.ArtifactStagingDirectory)' 
               artifactName: 'myWebsite' 
+
+  - stage: Deploy to webApps
+    displayName: Deploy to webApps
+    jobs:
+      - job:
+        displayName: Deploy to webApps
+        steps:
+          - task: AzureWebApp@1
+            inputs:
+              azureSubscription: 'dev_azure_connection_01'
+              appType: 'webApp'
+              appName: 'webapp005'
+              package: '$(System.DefaultWorkingDirectory)/**/*.zip'
+              deploymentMethod: 'auto'
