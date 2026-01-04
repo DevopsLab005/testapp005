@@ -64,7 +64,7 @@ stages:
               artifact: 'myWebsite'
               path: '$(Pipeline.Workspace)/myWebsite'
 
-          - task: AzureWebApp@1 #This Will be deployed to Azure Web APP
+          - task: AzureWebApp@1
             inputs:
               azureSubscription: 'dev_azure_connection_01'
               appType: 'webApp'
